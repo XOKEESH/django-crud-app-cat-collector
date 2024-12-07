@@ -103,6 +103,7 @@
         <thead>
           <tr>
             <th>Date</th>
+            <th>Name</th>
             <th>Description</th>
           </tr>
         </thead>
@@ -110,6 +111,7 @@
           {% for milestone in cat.milestones.all %}
           <tr>
             <td>{{ milestone.date }}</td>
+            <td>{{ milestone.name }}</td>
             <td>{{ milestone.description }}</td>
           </tr>
           {% endfor %}
