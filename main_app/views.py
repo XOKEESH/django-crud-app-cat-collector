@@ -1,12 +1,14 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Cat
+from django.views.generic import ListView, DetailView
+from .models import Cat, Toy
 from .forms import FeedingForm
+
 
 # Create your views here.
 class Home(LoginView):
@@ -23,9 +25,12 @@ def cat_index(request):
 @login_required
 def cat_detail(request, cat_id):
     cat = Cat.objects.get(id=cat_id)
+    toys_cat_doesnt_have = Toy.objects.exclude(id__in = cat.toys.all().values_list('id'))
     feeding_form = FeedingForm()
     return render(request, 'cats/detail.html', {
-        'cat': cat, 'feeding_form': feeding_form
+        'cat': cat, 
+        'feeding_form': feeding_form,
+        'toys': toys_cat_doesnt_have
         })
 
 @login_required
@@ -52,6 +57,18 @@ def signup(request):
     context = {'form': form, 'error_message': error_message}
     return render(request, 'signup.html', context)
 
+@login_required
+def associate_toy(request, cat_id, toy_id):
+    Cat.objects.get(id=cat_id).toys.add(toy_id)
+    return redirect('cat-detail', cat_id=cat_id)
+
+@login_required
+def remove_toy(request, cat_id, toy_id):
+    cat = get_object_or_404(Cat, id=cat_id)
+    toy = get_object_or_404(Toy, id=toy_id)
+    cat.toys.remove(toy)
+    return redirect('cat-detail', cat_id=cat.id)
+
 class CatCreate(LoginRequiredMixin, CreateView):
     model = Cat
     fields = ['name', 'breed', 'description', 'age']
@@ -69,3 +86,23 @@ class CatUpdate(LoginRequiredMixin, UpdateView):
 class CatDelete(LoginRequiredMixin, DeleteView):
     model = Cat
     success_url = '/cats/'
+
+class ToyCreate(CreateView):
+    model = Toy
+    fields = '__all__'
+
+class ToyList(ListView):
+    model = Toy
+
+class ToyDetail(DetailView):
+    model = Toy
+
+class ToyUpdate(UpdateView):
+    model = Toy
+    fields = ['name', 'color']
+
+class ToyDelete(DeleteView):
+    model = Toy
+    fields = ['name', 'breed', 'description', 'age']
+    success_url = '/toys/'
+
