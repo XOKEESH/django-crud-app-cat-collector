@@ -6,8 +6,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView
-from .models import Cat, Toy
-from .forms import FeedingForm
+from .models import Cat, Toy, Milestone
+from .forms import FeedingForm, MilestoneForm
 
 
 # Create your views here.
@@ -27,9 +27,13 @@ def cat_detail(request, cat_id):
     cat = Cat.objects.get(id=cat_id)
     toys_cat_doesnt_have = Toy.objects.exclude(id__in = cat.toys.all().values_list('id'))
     feeding_form = FeedingForm()
+    milestone_form = MilestoneForm()
+    milestones = cat.milestones.all()
     return render(request, 'cats/detail.html', {
         'cat': cat, 
         'feeding_form': feeding_form,
+        'milestone_form': milestone_form,
+        'milestones': milestones,
         'toys': toys_cat_doesnt_have
         })
 
@@ -41,6 +45,16 @@ def add_feeding(request, cat_id):
         new_feeding.cat_id = cat_id
         new_feeding.save()
 
+    return redirect('cat-detail', cat_id=cat_id)
+
+@login_required
+def add_milestone(request, cat_id):
+    """Add a milestone for a specific cat."""
+    form = MilestoneForm(request.POST, request.FILES)
+    if form.is_valid():
+        new_milestone = form.save(commit=False)
+        new_milestone.cat = get_object_or_404(Cat, id=cat_id)
+        new_milestone.save()
     return redirect('cat-detail', cat_id=cat_id)
 
 def signup(request):
@@ -105,4 +119,5 @@ class ToyDelete(DeleteView):
     model = Toy
     fields = ['name', 'breed', 'description', 'age']
     success_url = '/toys/'
+
 

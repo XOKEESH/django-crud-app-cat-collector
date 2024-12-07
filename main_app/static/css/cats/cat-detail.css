@@ -117,12 +117,14 @@
   }
   
   .feedings h2,
+  .milestones h2,
   .toys h2 {
     font-size: 3.2rem;
     margin: 0;
   }
   
   .feedings h3,
+  .milestones h3,
   .toys h3 {
     font-size: var(--font-xl);
     margin: 10px 0;
@@ -140,25 +142,29 @@
     padding: 3px;
   }
   
-  .feedings table {
+  .feedings table,
+  .milestones table {
     width: calc(100% - 16px);
     text-align: left;
     border-collapse: collapse;
     margin: 0 8px;
   }
   
-  .feedings td {
+  .feedings td,
+  .milestones td {
     padding: 8px 5px;
     font-size: var(--font-reg);
   }
   
-  .feedings th {
+  .feedings th,
+  .milestones th {
     font-size: var(--font-l);
     padding: 5px 5px 0;
-    border-bottom: rgb(36, 116, 248) solid 2px;
+    border-bottom: purple solid 2px;
   }
   
-  .feedings tr:nth-child(even) {
+  .feedings tr:nth-child(even),
+  .milestones tr:nth-child(even) {
     background-color: #f3f3fd;
   }
   
@@ -210,11 +216,21 @@
     .feedings-toy-container > section {
       width: 45%;
     }
+
+    .milestones {
+      width: 45%;
+      margin: 0 10px;
+    }
   }
   
   @media only screen and (min-width: 1024px) {
     .feedings-toy-container {
       padding: 0 40px;
     }
+
+    .milestones {
+      padding: 15px 20px;
+    }
   }
+
   

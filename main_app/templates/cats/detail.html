@@ -76,6 +76,52 @@
     {% endif %}
   </section>
 
+  <section class="milestones">
+    <div class="subsection-title">
+      <h2>Milestones</h2>
+      <img src="{% static 'images/Bronze Trophy.png' %}" alt="A bronze trophy icon" />
+      <img src="{% static 'images/Pink Trophy.png' %}" alt="A pink trophy icon" />
+      <img src="{% static 'images/Silver Trophy.png' %}" alt="A silver trophy icon" />
+    </div>
+  
+    <h3>Add a Milestone</h3>
+    <form 
+      action="{% url 'add-milestone' cat.id %}"
+      method="post"
+      class="subsection-content"
+      autocomplete="off"
+    >
+      {% csrf_token %}
+      {{ milestone_form.non_field_errors }}
+      {{ milestone_form.as_p }}
+      <button type="submit" class="btn submit">Add Milestone</button>
+    </form>
+  
+    <h3>Past Milestones</h3>
+    {% if cat.milestones.all.count %}
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for milestone in cat.milestones.all %}
+          <tr>
+            <td>{{ milestone.date }}</td>
+            <td>{{ milestone.description }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <div class="subsection-content">
+        <p>⚠️ {{ cat.name }} hasn't reached any milestones yet!</p>
+      </div>
+    {% endif %}
+  </section>  
+
   <section class="toys">
     <div class="subsection-title">
       <h2>Toys</h2>
@@ -111,7 +157,7 @@
           <div class="toy-container">
             <div class="color-block" style="background-color: {{ toy.color }}"></div>
             <a href="{% url 'toy-detail' toy.id %}">
-              <p>A {{ toy.color }} {{ toy.name }}</p>
+              <p>{{ toy.color }} {{ toy.name }}</p>
             </a>
             <form action="{% url 'associate-toy' cat.id toy.id %}" method="post">
               {% csrf_token %}

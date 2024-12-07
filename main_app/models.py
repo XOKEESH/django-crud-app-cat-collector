@@ -50,3 +50,15 @@ class Feeding(models.Model):
     class Meta:
         ordering = ['-date']
 
+class Milestone(models.Model):
+    cat = models.ForeignKey(Cat, on_delete=models.CASCADE, related_name='milestones')
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    date = models.DateField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.name} - {self.cat.name}'
+
+    class Meta:
+        ordering = ['date']
